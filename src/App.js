@@ -5,11 +5,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card, Container, Row, Col, Image, Carousel } from 'react-bootstrap';
 import axios from "axios";
 import { WEATHER_API_KEY, WEATHER_API_URL } from './api';
+import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import L, {Icon} from 'leaflet';
+
 
 function App() {
   const [loc, setLoc] = useState();
   const [currentWeather, setCurrentWeather] = useState();
   const [forcast, setForcast] = useState();
+  const corner1 = L.latLng(-90, -200)
+  const corner2 = L.latLng(90, 200)
+  const bounds = L.latLngBounds(corner1, corner2)
 
   useEffect(() => {
     getLocation()
@@ -39,7 +47,6 @@ function App() {
       `${WEATHER_API_URL}/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
     );
     setForcast(forecastFetch.data)
-    console.log(forecastFetch.data)
   }
 
   return (
@@ -125,6 +132,24 @@ function App() {
               <Card.Body className='my-4 fw-bold fs-5'>{currentWeather && currentWeather.wind.deg}°</Card.Body>
             </Card>
           </Col>
+        </Row>
+        <Row>
+          <h3 className='mb-4'>Percipitation Map:</h3>
+          {currentWeather && 
+            <MapContainer maxBoundsViscosity={1.0} maxBounds={bounds} center={[currentWeather.coord.lat, currentWeather.coord.lon]} zoom={3} scrollWheelZoom={false} style={{width: '99vw', height: '75vh'}}>
+              <TileLayer
+                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                className='w-100 h-auto'
+              />
+              <TileLayer
+                url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${WEATHER_API_KEY}`}
+                attribution='&copy; Weather data provided by <a href="https://openweathermap.org/">OpenWeather</a>'
+                className='w-100 h-auto'
+              />
+              <Marker position={[currentWeather.coord.lat, currentWeather.coord.lon]} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}/>
+            </MapContainer>
+          }
         </Row>
       </Container>
     </div>
