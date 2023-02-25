@@ -68,7 +68,7 @@ function App() {
             </h3>
           </Col>
           <Col className='d-flex flex-column align-items-center'>
-            <h3>3 Hour Forecast</h3>
+            <h3>24 Hour Forecast</h3>
             <Carousel indicators={true} wrap={false} variant="dark" className='w-100 pb-3'>
               {forcast && forcast.list.map((item,index) => {
                 if(index <= 7){
@@ -104,7 +104,7 @@ function App() {
           </Col>
           <Col>
             <Card className='text-center shadow mb-5'>
-              <Card.Header className='bg-white'>Today's Range</Card.Header>
+              <Card.Header className='bg-white'>Current Temperature Range</Card.Header>
               <Card.Body className='my-4 fw-bold fs-5'>{currentWeather && `${currentWeather.main.temp_min}°C - ${currentWeather.main.temp_max}°C`}</Card.Body>
             </Card>
           </Col>
